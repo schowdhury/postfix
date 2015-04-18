@@ -7,25 +7,29 @@ I have had to deal with email.  A lot.  We are not talking Gmail or Hotmail, we�
 
  
 
-###set system hostname to <my-website-hostname>
-> hostname <my-website-hostname>
+###set system hostname to `my-website-hostname`
+> hostname `my-website-hostname`
 
 ###create a cert
+```
 mkdir /etc/postfix/ssl
 cd /etc/postfix/ssl
 openssl req -new -x509 -nodes -out smtpd.pem -keyout smtpd.pem -days 3650
 postconf -e 'smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt'
+```
 
 ### Add your AWS creds for relaying email:
+```
 cat /etc/postfix/sasl_passwd
 
 email-smtp.us-east-1.amazonaws.com:25 <creds>
 ses-smtp-prod-335357831.us-east-1.elb.amazonaws.com:25 <creds>
+```
 
 #### you want to hash the file and get rid of the plain text creds above
 postmap hash:/etc/postfix/sasl_passwd
 
-###make sure mydestination doesn’t include <my-website-hostname>
+###make sure mydestination doesn’t include `my-website-hostname`
 #### append to main.cf
 
 ```
@@ -46,4 +50,6 @@ smtpd_sasl_local_domain = <my-website-hostname>
 
 ###---- TEST ----
 apt-get install mailutils
+```
 echo "This is a test" | mail -s "YO" anyuser@gmail.com -aFrom:user@<my-website-hostname>
+```
